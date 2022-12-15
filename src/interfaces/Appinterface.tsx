@@ -6,4 +6,5 @@ export default interface AppInterface {
   orderBook: OrderBookSlice
   addBids: (bids: string[][]) => void
   addAsks: (asks: string[][]) => void
+  changeChoosenAssets: (assets: string[]) => void
 }

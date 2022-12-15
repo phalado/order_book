@@ -1,24 +1,39 @@
 const TableStyles = ({
   container: {
-    width: '420px',
-    margin: "20px auto",
+    width: '440px',
+    margin: "18px auto",
     padding: '10px',
     backgroundColor: '#26323882'
   },
+  head: {
+    color: '#848e9c',
+    fontSize: '12px',
+    fontFamily: "Arial, sans-serif",
+    padding: '5px',
+  },
+  actualPrice: {
+    fontSize: '20px',
+    fontFamily: "Arial, sans-serif",
+  },
   table: {
-    width: '400px',
+    width: '420px',
     margin: 'auto',
   },
   cell: {
-    padding: 0,
-    color: 'rgb(183, 189, 198)',
-    border: 'none'
+    padding: '3px',
+    color: '#b7bdc6',
+    border: 'none',
+    width: '140px'
   },
-  bid: {
-    color: 'blue'
+  arrow: {
+    fontSize: '30px'
   },
-  asks: {
-    color: 'red'
+  div: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    top: 0,
+    left: 0
   }
 })
 

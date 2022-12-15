@@ -7,6 +7,7 @@ import TableContainer from '@mui/material/TableContainer';
 import Paper from '@mui/material/Paper';
 import tableStyles from '../styles/TableStyles'
 import AppInterface from '../interfaces/Appinterface';
+import ChooseAssets from './ChooseAssets';
 
 const App = (props: AppInterface) => {
   const {
@@ -14,7 +15,8 @@ const App = (props: AppInterface) => {
     changeActualPrice,
     updateLastUpdateId,
     addBids,
-    addAsks
+    addAsks,
+    changeChoosenAssets
   } = props;
   const [socket, setSocket] = useState({ readyState: -1 })
   const [subscribed, setSubscribed] = useState(false)
@@ -57,7 +59,11 @@ const App = (props: AppInterface) => {
   })
 
   useEffect(() => {
-    if (subscribed === true || socket.readyState === -1) return
+    if (
+      subscribed === true ||
+      socket.readyState === -1 ||
+      orderBook.choosenAssets.some(asset => asset === '')
+    ) return
 
     if (socket.readyState === 0) {
       setTimeout(() => setConnectTries(state => state + 1), 2000)
@@ -65,25 +71,32 @@ const App = (props: AppInterface) => {
       return
     }
     
-    binanceConnect(socket, setSubscribed)
-  }, [socket, subscribed, connectTries])
+    binanceConnect(socket, setSubscribed, orderBook.choosenAssets)
+  }, [socket, subscribed, connectTries, orderBook.choosenAssets])
 
   useEffect(() => setBids(orderBook.bids), [orderBook.bids])
   useEffect(() => setAsks(orderBook.asks), [orderBook.asks])
 
+  if (orderBook.choosenAssets.includes('')) {
+    return (
+      <div className="App">
+        <ChooseAssets changeChoosenAssets={changeChoosenAssets} />
+      </div>
+    )
+  }
+
   return (
     <div className="App">
-    <TableContainer component={Paper} sx={tableStyles.container}>
-      {bids.length > 1 && <BookTableContainer data={bids.slice(0, 15)} />}
-      {asks.length > 1 && 
-        <BookTableContainer
-          data={asks.slice(0, 15)}
-          actualPrice={orderBook.actualPrice}
-          lastPrice={orderBook.lastPrice}
-          asks
-        />
-      }
-    </TableContainer>
+      <TableContainer component={Paper} sx={tableStyles.container}>
+        {<BookTableContainer data={bids.slice(0, 15)} />}
+        {<BookTableContainer
+            data={asks.slice(0, 15)}
+            actualPrice={orderBook.actualPrice}
+            lastPrice={orderBook.lastPrice}
+            asks
+          />
+        }
+      </TableContainer>
     </div>
   );
 }

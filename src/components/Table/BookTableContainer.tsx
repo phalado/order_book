@@ -9,7 +9,7 @@ import BookTableContainerInterface from "../../interfaces/BookTableContainerInte
 const BookTableContainer = (props: BookTableContainerInterface) =>  (
   <Table sx={styles.table} aria-label="simple table">
     <BookTableHead { ...props } />
-    <BookTableBody data={props.data} />
+    <BookTableBody data={props.data} asks={props.asks} />
   </Table>
 )
 

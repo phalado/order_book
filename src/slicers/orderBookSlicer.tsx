@@ -3,6 +3,7 @@ import OrderBookSlice from '../interfaces/OrderBookSlice';
 
 const initialState = {
   symbol: '',
+  choosenAssets: ['', ''],
   lastUpdateId: 0,
   actualPrice: 0,
   lastPrice: 0,
@@ -10,7 +11,7 @@ const initialState = {
   asks: [['', '']]
 }
 
-const workPayload = (array: string[][], state: OrderBookSlice) => (
+const workPayload = (array: string[][]) => (
   array.filter((bid: string[]) => (Number(bid[1]) > 0))
 )
 
@@ -29,14 +30,24 @@ const orderBookSlicer = createSlice({
     }),
     addBids: (state: OrderBookSlice, action: { payload: string[][] }) => ({
       ...state,
-      bids: [...workPayload(action.payload, state)]
+      bids: [...workPayload(action.payload)]
     }),
     addAsks: (state: OrderBookSlice, action: { payload: string[][] }) => ({
       ...state,
-      asks: [...workPayload(action.payload, state)]
+      asks: [...workPayload(action.payload)]
+    }),
+    changeChoosenAssets: (state: OrderBookSlice, action: { payload: string[] }) => ({
+      ...state,
+      choosenAssets: action.payload
     })
   }
 })
 
-export const { changeActualPrice, updateLastUpdateId, addBids, addAsks } = orderBookSlicer.actions
+export const {
+  changeActualPrice,
+  updateLastUpdateId,
+  addBids,
+  addAsks,
+  changeChoosenAssets
+} = orderBookSlicer.actions
 export default orderBookSlicer

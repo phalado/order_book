@@ -12,8 +12,11 @@ export const BinanceSocketClient = (handleWSMessage: (message: object) => void) 
   return socket
 }
 
-export const binanceConnect = (socket: any, setSubscribed: Dispatch<SetStateAction<boolean>>) => {
-  const message = { "method": "SUBSCRIBE", "params": ["btcusdt@depth"], "id": 1 }
+export const binanceConnect = (
+  socket: any, setSubscribed: Dispatch<SetStateAction<boolean>>, choosenAssets: string[]
+) => {
+  const symbols = choosenAssets.join('')
+  const message = { "method": "SUBSCRIBE", "params": [symbols + "@depth@1000ms"], "id": 1 }
 
   socket.send(JSON.stringify(message))
   setSubscribed(true)

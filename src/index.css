@@ -12,3 +12,11 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.MuiOutlinedInput-notchedOutline {
+  border-color: white !important
+}
+
+.MuiSelect-icon {
+  color: white !important
+}
