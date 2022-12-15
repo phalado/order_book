@@ -1,50 +1,89 @@
 import React, { useEffect, useState} from 'react';
-import logo from './logo.svg';
-import './App.css';
 import BookTableContainer from './Table'
 import { binanceConnect, BinanceSocketClient } from '../services/BinanceSocketClient';
+import DepthSnapShopt from '../services/DepthSnapshot';
 
-const App = () => {
-  const [socket] = useState(BinanceSocketClient())
+import TableContainer from '@mui/material/TableContainer';
+import Paper from '@mui/material/Paper';
+import tableStyles from '../styles/TableStyles'
+import AppInterface from '../interfaces/Appinterface';
+
+const App = (props: AppInterface) => {
+  const {
+    orderBook,
+    changeActualPrice,
+    updateLastUpdateId,
+    addBids,
+    addAsks
+  } = props;
+  const [socket, setSocket] = useState({ readyState: -1 })
   const [subscribed, setSubscribed] = useState(false)
+  const [connectTries, setConnectTries] = useState(0)
+  const [snapshot, setSnapshot] = useState({ lastUpdateId: 0, bids: [], asks: [] });
+  const [bids, setBids] = useState(orderBook.bids)
+  const [asks, setAsks] = useState(orderBook.asks)
 
-  const bids = [
-    ["0.01530400", "4.33400000"],
-    ["0.01530300", "3.58400000"],
-    ["0.01530200", "0.81800000"],
-    ["0.01530100", "0.09800000"],
-    ["0.01529800", "1.10300000"],
-    ["0.01529700", "0.13100000"],
-    ["0.01529600", "0.08300000"],
-    ["0.01529500", "0.18100000"],
-    ["0.01529400", "0.78500000"],
-    ["0.01529300", "0.05100000"]
-  ]
+  const calcActualPrice = (data: { bids: string[][], asks: string[][] }) => {
+    const bids = data.bids.map((value) => Number(value[0]))
+      .reduce((partial, value) => partial + value, 0)
+    const asks = data.asks.map((value) => Number(value[0]))
+      .reduce((partial, value) => partial + value, 0)
 
-  const asks = [
-    ["0.01530500", "6.82200000"],
-    ["0.01530600", "7.22200000"],
-    ["0.01530700", "3.90000000"],
-    ["0.01530900", "0.65600000"],
-    ["0.01531000", "0.73300000"],
-    ["0.01531300", "0.16300000"],
-    ["0.01531500", "1.19500000"],
-    ["0.01531600", "2.65400000"],
-    ["0.01531800", "0.80000000"],
-    ["0.01532000", "1.04000000"]
-  ]
+    return (bids + asks) / (data.bids.length + data.asks.length)
+  }
+
+  const handleWSMessage = (message: any) => {
+    if (message.e === 'depthUpdate') {
+      addBids(message.b)
+      addAsks(message.a)
+      updateLastUpdateId(message.u)
+      changeActualPrice(calcActualPrice({ bids: message.b, asks: message.a }))
+    }
+  }
 
   useEffect(() => {
-    console.log('here', subscribed)
-    if (subscribed === false) {
-      setTimeout(() => binanceConnect(socket, setSubscribed), 2000)
+    if (snapshot.lastUpdateId === 0) DepthSnapShopt(setSnapshot);
+  }, [snapshot])
+
+  useEffect(() => {
+    if (!snapshot) return
+
+    updateLastUpdateId(snapshot.lastUpdateId)
+    changeActualPrice(calcActualPrice(snapshot))
+  }, [snapshot])
+
+  useEffect(() => {
+    if (socket.readyState === -1) setSocket(BinanceSocketClient(handleWSMessage))
+  })
+
+  useEffect(() => {
+    if (subscribed === true || socket.readyState === -1) return
+
+    if (socket.readyState === 0) {
+      setTimeout(() => setConnectTries(state => state + 1), 2000)
+      console.warn(connectTries)
+      return
     }
-  }, [socket, subscribed])
+    
+    binanceConnect(socket, setSubscribed)
+  }, [socket, subscribed, connectTries])
+
+  useEffect(() => setBids(orderBook.bids), [orderBook.bids])
+  useEffect(() => setAsks(orderBook.asks), [orderBook.asks])
 
   return (
     <div className="App">
-      <BookTableContainer data={bids} />
-      <BookTableContainer data={asks} />
+    <TableContainer component={Paper} sx={tableStyles.container}>
+      {bids.length > 1 && <BookTableContainer data={bids.slice(0, 15)} />}
+      {asks.length > 1 && 
+        <BookTableContainer
+          data={asks.slice(0, 15)}
+          actualPrice={orderBook.actualPrice}
+          lastPrice={orderBook.lastPrice}
+          asks
+        />
+      }
+    </TableContainer>
     </div>
   );
 }
