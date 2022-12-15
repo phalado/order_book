@@ -4,6 +4,7 @@ export default interface OrderBookSlice {
   lastUpdateId: number
   actualPrice: number
   lastPrice: number
-  bids: any
-  asks: any
+  bids: string[][]
+  asks: string[][]
+  selectedBook: string
 }

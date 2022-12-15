@@ -4,7 +4,7 @@ import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import styles from '../../styles/TableStyles'
 
-const BookTableBody = ({ data, asks }: { data: string[][], asks?: boolean }) => {
+const BuySellTableBody = ({ data, asks }: { data: string[][], asks?: boolean }) => {
   const cellStyle = { ...styles.cell, color: asks ? '#0ecb81' : '#f6465d' }
 
   return (
@@ -26,4 +26,4 @@ const BookTableBody = ({ data, asks }: { data: string[][], asks?: boolean }) => 
   )
 }
 
-export default BookTableBody
+export default BuySellTableBody

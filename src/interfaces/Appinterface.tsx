@@ -7,4 +7,5 @@ export default interface AppInterface {
   addBids: (bids: string[][]) => void
   addAsks: (asks: string[][]) => void
   changeChoosenAssets: (assets: string[]) => void
+  changeSelectedOrderBook: (selectedBook: string) => void
 }

@@ -1,9 +1,10 @@
 const TableStyles = ({
   container: {
     width: '440px',
-    margin: "18px auto",
+    margin: "auto",
     padding: '10px',
-    backgroundColor: '#26323882'
+    backgroundColor: '#26323882',
+    borderRadius: '0 0 4px 4px'
   },
   head: {
     color: '#848e9c',

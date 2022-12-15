@@ -3,4 +3,5 @@ export default interface BookTableContainerInterface {
   asks?: boolean
   actualPrice?: number
   lastPrice?: number
+  assets: string[]
 }

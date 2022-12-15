@@ -2,12 +2,14 @@ import React, { useEffect, useState} from 'react';
 import BookTableContainer from './Table'
 import { binanceConnect, BinanceSocketClient } from '../services/BinanceSocketClient';
 import DepthSnapShopt from '../services/DepthSnapshot';
+import Header from './Header'
 
 import TableContainer from '@mui/material/TableContainer';
 import Paper from '@mui/material/Paper';
 import tableStyles from '../styles/TableStyles'
 import AppInterface from '../interfaces/Appinterface';
 import ChooseAssets from './ChooseAssets';
+import BuySellTable from './BuySellTable/BuySellTable';
 
 const App = (props: AppInterface) => {
   const {
@@ -16,7 +18,8 @@ const App = (props: AppInterface) => {
     updateLastUpdateId,
     addBids,
     addAsks,
-    changeChoosenAssets
+    changeChoosenAssets,
+    changeSelectedOrderBook
   } = props;
   const [socket, setSocket] = useState({ readyState: -1 })
   const [subscribed, setSubscribed] = useState(false)
@@ -41,6 +44,10 @@ const App = (props: AppInterface) => {
       updateLastUpdateId(message.u)
       changeActualPrice(calcActualPrice({ bids: message.b, asks: message.a }))
     }
+  }
+
+  const handleChangeSelectedBook = (selectedBook: string) => {
+    changeSelectedOrderBook(selectedBook)
   }
 
   useEffect(() => {
@@ -85,20 +92,47 @@ const App = (props: AppInterface) => {
     )
   }
 
-  return (
-    <div className="App">
-      <TableContainer component={Paper} sx={tableStyles.container}>
-        {<BookTableContainer data={bids.slice(0, 15)} />}
-        {<BookTableContainer
+  if (orderBook.selectedBook === 'order') {
+    return (
+      <div className="App">
+        <Header
+          assets={orderBook.choosenAssets}
+          selectedBook={orderBook.selectedBook}
+          handleChangeSelectedBook={handleChangeSelectedBook}
+        />
+        <TableContainer component={Paper} sx={tableStyles.container}>
+          <BookTableContainer
+            data={bids.slice(0, 15)}
+            assets={orderBook.choosenAssets}
+          />
+          <BookTableContainer
             data={asks.slice(0, 15)}
             actualPrice={orderBook.actualPrice}
             lastPrice={orderBook.lastPrice}
+            assets={orderBook.choosenAssets}
             asks
           />
-        }
-      </TableContainer>
-    </div>
-  );
+        </TableContainer>
+      </div>
+    );
+  }
+
+  return (
+    <div className="App">
+        <Header
+          assets={orderBook.choosenAssets}
+          selectedBook={orderBook.selectedBook}
+          handleChangeSelectedBook={handleChangeSelectedBook}
+        />
+        <TableContainer component={Paper} sx={tableStyles.container}>
+          <BuySellTable
+            data={orderBook.selectedBook === 'buy' ? asks : bids}
+            assets={orderBook.choosenAssets}
+            asks={orderBook.selectedBook === 'buy'}
+          />
+        </TableContainer>
+      </div>
+  )
 }
 
 export default App;

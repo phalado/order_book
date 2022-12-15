@@ -8,7 +8,8 @@ const initialState = {
   actualPrice: 0,
   lastPrice: 0,
   bids: [['', '']],
-  asks: [['', '']]
+  asks: [['', '']],
+  selectedBook: 'order'
 }
 
 const workPayload = (array: string[][]) => (
@@ -39,7 +40,11 @@ const orderBookSlicer = createSlice({
     changeChoosenAssets: (state: OrderBookSlice, action: { payload: string[] }) => ({
       ...state,
       choosenAssets: action.payload
-    })
+    }),
+    changeSelectedOrderBook: (state: OrderBookSlice, action: { payload: string }) => ({
+      ...state,
+      selectedBook: action.payload
+    }),
   }
 })
 
@@ -48,6 +53,7 @@ export const {
   updateLastUpdateId,
   addBids,
   addAsks,
-  changeChoosenAssets
+  changeChoosenAssets,
+  changeSelectedOrderBook
 } = orderBookSlicer.actions
 export default orderBookSlicer

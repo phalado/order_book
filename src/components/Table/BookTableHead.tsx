@@ -4,9 +4,10 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import BookTableContainerInterface from "../../interfaces/BookTableContainerInterface";
 import styles from '../../styles/TableStyles'
+import { Link } from "@mui/material";
 
 const BookTableHead = (props: BookTableContainerInterface) => {
-  const { asks, actualPrice = 0, lastPrice = 0 } = props
+  const { asks, actualPrice = 0, lastPrice = 0, assets } = props
 
   let actualPriceColor = '#b7bdc6'
   if (actualPrice > lastPrice) actualPriceColor = '#0ecb81'
@@ -20,7 +21,11 @@ const BookTableHead = (props: BookTableContainerInterface) => {
     return <span style={styles.arrow}>&#8595;</span>
   }
 
+  const capitalAssets = () => assets.map(a => a.toUpperCase()).join('_')
+
   if (asks) {
+    const moreLink = "https://www.binance.com/en/orderbook/" + capitalAssets()
+
     return (
       <TableHead>
         <TableRow>
@@ -29,7 +34,14 @@ const BookTableHead = (props: BookTableContainerInterface) => {
             {priceArrow()}
           </TableCell>
           <TableCell align="left" style={styles.head}>{lastPrice.toFixed(2)}</TableCell>
-          <TableCell align="right" style={styles.head}>More</TableCell>
+          <TableCell align="right" style={styles.head}>
+            <Link
+              href={moreLink}
+              underline="none"
+              target='_blank'
+              sx={styles.head}
+            >More</Link>
+          </TableCell>
         </TableRow>
       </TableHead>
     )
@@ -38,8 +50,12 @@ const BookTableHead = (props: BookTableContainerInterface) => {
   return (
     <TableHead>
       <TableRow>
-        <TableCell style={styles.head}>Price</TableCell>
-        <TableCell align="right" style={styles.head}>Amount</TableCell>
+        <TableCell style={styles.head}>
+          {"Price (" + assets[1].toUpperCase() + ")"}
+        </TableCell>
+        <TableCell align="right" style={styles.head}>
+          {"Amount (" + assets[0].toUpperCase() + ")"}
+        </TableCell>
         <TableCell align="right" style={styles.head}>Total</TableCell>
       </TableRow>
     </TableHead>
