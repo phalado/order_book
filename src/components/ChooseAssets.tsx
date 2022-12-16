@@ -16,7 +16,7 @@ const ChooseAssets = (
   const [assets, setAssets] = useState(['', ''])
 
   const assetTypes = [
-    { name: 'US Dolar', symbol: 'busd' },
+    { name: 'Binance US Dolar', symbol: 'busd' },
     { name: 'Bitcoin', symbol: 'btc' },
     { name: 'Ethereum', symbol: 'eth' },
     { name: 'TetherUS', symbol: 'usdt' },
