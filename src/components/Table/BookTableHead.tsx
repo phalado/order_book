@@ -7,7 +7,7 @@ import styles from '../../styles/TableStyles'
 import { Link } from "@mui/material";
 
 const BookTableHead = (props: BookTableContainerInterface) => {
-  const { asks, actualPrice = 0, lastPrice = 0, assets } = props
+  const { bids, actualPrice = 0, lastPrice = 0, assets } = props
 
   let actualPriceColor = '#b7bdc6'
   if (actualPrice > lastPrice) actualPriceColor = '#0ecb81'
@@ -23,7 +23,7 @@ const BookTableHead = (props: BookTableContainerInterface) => {
 
   const capitalAssets = () => assets.map(a => a.toUpperCase()).join('_')
 
-  if (asks) {
+  if (bids) {
     const moreLink = "https://www.binance.com/en/orderbook/" + capitalAssets()
 
     return (

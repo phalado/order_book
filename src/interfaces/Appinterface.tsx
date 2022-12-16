@@ -8,4 +8,5 @@ export default interface AppInterface {
   addAsks: (asks: string[][]) => void
   changeChoosenAssets: (assets: string[]) => void
   changeSelectedOrderBook: (selectedBook: string) => void
+  changeAggregators: (newAggregators: number[]) => void
 }

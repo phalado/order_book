@@ -7,7 +7,8 @@ import {
   changeActualPrice,
   updateLastUpdateId,
   changeChoosenAssets,
-  changeSelectedOrderBook
+  changeSelectedOrderBook,
+  changeAggregators,
 } from '../slicers/orderBookSlicer'
 
 const mapStateToProps = (state: { orderBook: OrderBookSlice }) => ({
@@ -20,7 +21,8 @@ const mapDispatchToProps = (dispatch: any) => ({
   addBids: ((bids: string[][]) => dispatch(addBids(bids))),
   addAsks: ((bids: string[][]) => dispatch(addAsks(bids))),
   changeChoosenAssets: ((assets: string[]) => dispatch(changeChoosenAssets(assets))),
-  changeSelectedOrderBook: ((orderBook: string) => dispatch(changeSelectedOrderBook(orderBook)))
+  changeSelectedOrderBook: ((orderBook: string) => dispatch(changeSelectedOrderBook(orderBook))),
+  changeAggregators: ((newAggregators: number[]) => dispatch(changeAggregators(newAggregators))),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

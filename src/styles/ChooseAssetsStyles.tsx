@@ -26,6 +26,11 @@ const ChooseAssetsStyles = ({
   },
   menuItem: {
     color: 'black'
+  },
+  aggregatorSelect: {
+    width: '115px',
+    color: '#b7bdc6',
+    textAlign: 'center'
   }
 })
 

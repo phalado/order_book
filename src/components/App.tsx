@@ -19,7 +19,8 @@ const App = (props: AppInterface) => {
     addBids,
     addAsks,
     changeChoosenAssets,
-    changeSelectedOrderBook
+    changeSelectedOrderBook,
+    changeAggregators,
   } = props;
   const [socket, setSocket] = useState({ readyState: -1 })
   const [subscribed, setSubscribed] = useState(false)
@@ -50,15 +51,32 @@ const App = (props: AppInterface) => {
     changeSelectedOrderBook(selectedBook)
   }
 
-  useEffect(() => {
-    if (snapshot.lastUpdateId === 0) DepthSnapShopt(setSnapshot);
-  }, [snapshot])
+  const checkAggregators = (data: number[], actualPrice: number) => {
+    const newAggregators: number[] = []
+    orderBook.aggregators.forEach((aggregator: number) => {
+      if (
+        !data.every((value: number) => Number((value % aggregator).toFixed(2)) === 0) &&
+        aggregator < actualPrice
+      ) {
+        newAggregators.push(aggregator)
+      }
+    })
+    changeAggregators(newAggregators)
+  }
 
   useEffect(() => {
-    if (!snapshot) return
+    if (orderBook.choosenAssets.some(asset => asset === '')) return
 
+    if (snapshot.lastUpdateId === 0) DepthSnapShopt(setSnapshot, orderBook.choosenAssets);
+  }, [snapshot, orderBook.choosenAssets])
+
+  useEffect(() => {
+    if (snapshot.lastUpdateId === 0) return
+
+    const actualPrice = calcActualPrice(snapshot)
     updateLastUpdateId(snapshot.lastUpdateId)
-    changeActualPrice(calcActualPrice(snapshot))
+    changeActualPrice(actualPrice)
+    checkAggregators(snapshot.bids.concat(snapshot.asks).map(v => Number(v[0])), actualPrice)
   }, [snapshot])
 
   useEffect(() => {
@@ -102,15 +120,17 @@ const App = (props: AppInterface) => {
         />
         <TableContainer component={Paper} sx={tableStyles.container}>
           <BookTableContainer
-            data={bids.slice(0, 15)}
+            data={asks.slice(0, 15)}
             assets={orderBook.choosenAssets}
+            aggregator={orderBook.choosenAggregator}
           />
           <BookTableContainer
-            data={asks.slice(0, 15)}
+            data={bids.slice(0, 15)}
             actualPrice={orderBook.actualPrice}
             lastPrice={orderBook.lastPrice}
             assets={orderBook.choosenAssets}
-            asks
+            aggregator={orderBook.choosenAggregator}
+            bids
           />
         </TableContainer>
       </div>
@@ -128,7 +148,8 @@ const App = (props: AppInterface) => {
           <BuySellTable
             data={orderBook.selectedBook === 'buy' ? asks : bids}
             assets={orderBook.choosenAssets}
-            asks={orderBook.selectedBook === 'buy'}
+            aggregator={orderBook.choosenAggregator}
+            bids={orderBook.selectedBook === 'buy'}
           />
         </TableContainer>
       </div>

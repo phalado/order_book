@@ -3,9 +3,14 @@ import { Container } from '@mui/system';
 import React from 'react'
 import HeaderInterface from '../interfaces/HeaderInterface';
 import styles from '../styles/HeaderStyles'
+import AggregatorSelect from '../containers/AggregatorSelect';
 
 const Header = (props: HeaderInterface) => {
-  const { assets, selectedBook, handleChangeSelectedBook } = props;
+  const {
+    assets,
+    selectedBook,
+    handleChangeSelectedBook,
+  } = props;
 
   const capitalAssets = () => assets.map(a => a.toUpperCase()).join('/')
 
@@ -30,6 +35,7 @@ const Header = (props: HeaderInterface) => {
           style={selectedBook === 'sell' ? {} : styles.notSelected}
         />
       </Button>
+      <AggregatorSelect />
     </Container>
   )
 }

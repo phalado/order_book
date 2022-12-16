@@ -7,4 +7,6 @@ export default interface OrderBookSlice {
   bids: string[][]
   asks: string[][]
   selectedBook: string
+  aggregators: number[]
+  choosenAggregator: number
 }

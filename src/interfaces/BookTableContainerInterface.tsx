@@ -1,7 +1,8 @@
 export default interface BookTableContainerInterface {
   data: string[][]
-  asks?: boolean
+  bids?: boolean
   actualPrice?: number
   lastPrice?: number
   assets: string[]
+  aggregator: number
 }
